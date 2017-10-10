@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AppLolli</string>
+    <string name="title_activity_terminal">TerminalActivity</string>
+    <string name="action_settings">Settings</string>
+</resources>
