@@ -8,43 +8,34 @@ import android.app.Activity;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.victor.applolli.Letras.Resultado;
 import com.example.victor.applolli.R;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 
-//import app.akexorcist.bluetoothspp.Letras.Resultado;
-//import app.akexorcist.bluetoothspp.R;
 
 public class JogoBichos extends Activity implements TextToSpeech.OnInitListener {
 
     private ImageView mImageView;
     public String animal;
-
     private static final int REQUEST_CODE = 1234;
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
-    public int i4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jogo_bichos);
 
-        mImageView = (ImageView)findViewById(R.id.imageViewBichos);
+        mImageView = findViewById(R.id.imageViewBichos);
 
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-        //  FuncaoRandom();
 
     }
 

@@ -10,19 +10,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.widget.Toast;
 import android.widget.VideoView;
-
 import com.example.victor.applolli.R;
-
 import java.util.Locale;
 import java.util.Random;
 
@@ -44,8 +37,6 @@ public class Jogo extends Activity implements OnInitListener,MediaPlayer.OnPrepa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jogo);
 
-
-        View placeholder = (View) findViewById(R.id.placeholder);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
 
@@ -83,7 +74,7 @@ public class Jogo extends Activity implements OnInitListener,MediaPlayer.OnPrepa
 
     private void speakWords(final String speech) {
 
-        final VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        final VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.roboletra;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.setBackgroundColor(Color.WHITE);

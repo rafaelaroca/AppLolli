@@ -13,18 +13,13 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 import android.widget.VideoView;
-
 import com.example.victor.applolli.Letras.Resultado;
 import com.example.victor.applolli.R;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
-
-
 
 import static android.content.ContentValues.TAG;
 
@@ -54,7 +49,7 @@ public class JogoMat extends Activity implements TextToSpeech.OnInitListener {
 
     private void speakWords(String speech) {
 
-        final VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        final VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robomat;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -227,10 +222,7 @@ public class JogoMat extends Activity implements TextToSpeech.OnInitListener {
         speakWords(palavra);
     }
 
-    private String getCharForNumber(int i) {
-        return i > 0 && i < 27 ? String.valueOf((char) (i + 64)) : null;
 
-    }
 
     @Override
     public void onInit(int initStatus) {

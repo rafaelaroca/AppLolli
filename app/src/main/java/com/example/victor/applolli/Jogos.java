@@ -11,18 +11,11 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.VideoView;
-
 import com.example.victor.applolli.Bichos.JogoBichos;
 import com.example.victor.applolli.Letras.Jogo;
 import com.example.victor.applolli.Matematica.JogoMat;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -30,29 +23,12 @@ import static android.content.ContentValues.TAG;
 
 public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
 
-    Uri imageUri;
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-
     private static final int REQUEST_CODE = 1234;
-    private Button mTalkButton;
-    private ListView ListaDeJogos;
-
-    private TextView returnedText;
-    private ToggleButton toggleButton;
-    private ProgressBar progressBar;
-    // private SpeechRecognizer speech = null;
-    private String LOG_TAG = "VoiceRecognitionActivity";
-
     private int MY_DATA_CHECK_CODE = 0;
-    private int VOICE_RECOGNITION_REQUEST_CODE = 10;
     private TextToSpeech myTTS;
+    public int Opcao;
     String Op_servidor = "servidor_web";
 
-    int tempo = 0;
-
-    public int Opcao;
-
-    String[] mobileArray = {"Encontrar objeto","Jogo das letras","Jogo dos numeros"};
 
     @SuppressWarnings("deprecation")
 
@@ -82,29 +58,9 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
 
 
 
-/*    public void Esperar() {
-
-        final Handler timerHandler = new Handler();
-
-        Runnable timerRunnable = new Runnable() {
-
-            public void run() {
-
-                if (tempo==1) {
-                    onTTSSpeechFinished();
-                } else {
-                    tempo = 0;
-                    speakWords();
-                }
-            }
-        };
-
-        timerHandler.postDelayed(timerRunnable, 8000);
-    }*/
-
     private void speakWords() {
 
-        final VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        final VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo4;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -152,7 +108,7 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
     private void speakWords2() {
 
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo5;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -178,7 +134,7 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
     private void speakWords3() {
 
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo5;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -204,7 +160,7 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
     private void speakWords4() {
 
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo5;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -228,7 +184,7 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
     }
     private void speakWords5() {
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo5;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -253,7 +209,7 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
 
     private void speakWords6() {
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo5;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -412,10 +368,6 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
                 speakWords6();
             }
 
-            else
-            {
-                //  Esperar();
-            }
 
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -439,14 +391,6 @@ public class Jogos extends Activity implements  TextToSpeech.OnInitListener {
     {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        // intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Voice recognition Demo...");
-        // String defaultLanguage = Locale.getDefault().toString();
-        // intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        //  intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 5000);
-        // intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 5000);
-        // intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 5000);
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 10);
-
         startActivityForResult(intent, REQUEST_CODE);
 
     }

@@ -1,31 +1,19 @@
 package com.example.victor.applolli;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.hardware.Camera;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
-
-
 import com.example.library.BluetoothSPP;
 import com.example.library.BluetoothState;
 import com.example.library.DeviceList;
@@ -34,6 +22,7 @@ import com.example.library.BluetoothSPP.OnDataReceivedListener;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class TerminalActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
@@ -47,9 +36,13 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
     public int Opcao;
     public String ObjetoDesejado;
     private TextToSpeech myTTS;
-    Uri imageUri;
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     boolean Serv = false;
+
+
+
+
+
+    String test_conn = "";
 
     Menu menu;
 
@@ -58,10 +51,9 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
         setContentView(R.layout.activity_terminal);
         Log.i("Check", "onCreate");
 
-        textRead = (TextView) findViewById(R.id.textRead);
-        textStatus = (TextView) findViewById(R.id.textStatus);
-        etMessage = (EditText) findViewById(R.id.etMessage);
-        txtObjeto = (TextView) findViewById(R.id.txtObjeto);
+        textStatus = findViewById(R.id.textStatus);
+        etMessage = findViewById(R.id.etMessage);
+        txtObjeto = findViewById(R.id.txtObjeto);
 
         // Bundle b = getIntent().getExtras();
         //  long value = b.getLong("startTime", 0);
@@ -73,15 +65,18 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
 
             String Opcao_Servidor = extras.getString("server");
 
-            if (Opcao_Servidor.equals("servidor_web")) {
+            if (Opcao_Servidor != null)
+            {
+                if (Opcao_Servidor.equals("servidor_web")) {
 
-                Serv = true;
+                    Serv = true;
+                }
+
             }
+
         }
 
         bt = new BluetoothSPP(this);
-
-
 
 
         if (!bt.isBluetoothAvailable()) {
@@ -98,25 +93,38 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
         });
 
         bt.setBluetoothConnectionListener(new BluetoothConnectionListener() {
+            String strConnect = "";
             public void onDeviceDisconnected() {
-                textStatus.setText("Status : Not connect");
+                strConnect = "Status : Not connect";
+                textStatus.setText(strConnect);
                 menu.clear();
                 getMenuInflater().inflate(R.menu.menu_connection, menu);
             }
 
             public void onDeviceConnectionFailed() {
-                textStatus.setText("Status : Connection failed");
+                strConnect = "Status : Connection failed";
+                textStatus.setText(strConnect);
             }
 
             public void onDeviceConnected(String name, String address) {
-
-                textStatus.setText("Status : Connected to " + name);
+                strConnect = "Status : Connected to " + name;
+                textStatus.setText(strConnect);
                 menu.clear();
                 getMenuInflater().inflate(R.menu.menu_disconnection, menu);
 
+                System.out.println(bt.getConnectedDeviceName());
+
+                test_conn = strConnect;
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result","connected");
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
 
 
-                if(Serv==true)
+
+
+                /*if(Serv)
                 {
                     Intent intent = new Intent(getApplicationContext(),ServidorAndroid.class);
                     startActivityForResult(intent,1);
@@ -126,7 +134,7 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
                     Intent checkTTSIntent = new Intent();
                     checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
                     startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-                }
+                }*/
 
 
 
@@ -134,6 +142,8 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
         });
 
     }
+
+
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,14 +154,16 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_android_connect) {
+        /*if (id == R.id.menu_android_connect) {
             bt.setDeviceTarget(BluetoothState.DEVICE_ANDROID);
-			/*
+
 			if(bt.getServiceState() == BluetoothState.STATE_CONNECTED)
-    			bt.disconnect();*/
+    			bt.disconnect();
             Intent intent = new Intent(getApplicationContext(), DeviceList.class);
             startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
-        } else if (id == R.id.menu_device_connect) {
+        }
+         */
+        if (id == R.id.menu_device_connect) {
             bt.setDeviceTarget(BluetoothState.DEVICE_OTHER);
 			/*
 			if(bt.getServiceState() == BluetoothState.STATE_CONNECTED)
@@ -193,15 +205,22 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent != null)
+        {
             setIntent(intent);
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            String value = extras.getString("methodName");
-            if(value.equals("myMethod"));
-            {
-                Reiniciar();
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                String value = extras.getString("methodName");
+                if (value != null)
+                {
+                    if(value.equals("myMethod"));
+                    {
+                        Reiniciar();
+                    }
+
+
+                }
+
             }
-            //The key argument here must match that used in the other activity
         }
     }
     /* @Override
@@ -228,6 +247,13 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
     }
 
     public void setup() {
+    }
+
+    public static void Rodar(int tempo_mover) {
+        System.out.println("VEIO NO RODAR");
+        System.out.println(Arrays.toString(bt.getPairedDeviceName()));
+        System.out.println(bt.getConnectedDeviceName());
+
     }
 
     public static void MoverFrente() {
@@ -352,7 +378,7 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
         startActivityForResult(intent,1);
     }
 
-    public static void FuncaoAndar(int tempo, String direcao)
+    /*public static void FuncaoAndar(int tempo, String direcao)
     {
 
         if (direcao.equals("frente"))
@@ -424,7 +450,7 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
 
         }
 
-    }
+    }*/
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -455,8 +481,10 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
             System.out.println("Resultados :"+matches);
 
             ObjetoDesejado =  matches.get(0);
+            String SetObjDes;
+            SetObjDes = "Objeto desejado : " + ObjetoDesejado;
             System.out.println("O objeto desejado é: " + ObjetoDesejado);
-            txtObjeto.setText("Objeto desejado : " + ObjetoDesejado);
+            txtObjeto.setText(SetObjDes);
 
             speakWords2();
 
@@ -523,9 +551,9 @@ public class TerminalActivity extends AppCompatActivity implements TextToSpeech.
                     startActivityForResult(intent,1);
                 }*/
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
+            /*if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
-            }
+            }*/
         }
 
         else if (requestCode == BluetoothState.REQUEST_ENABLE_BT) {

@@ -3,22 +3,16 @@ package com.example.victor.applolli.Letras;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.VideoView;
-
 import com.example.victor.applolli.Bichos.JogoBichos;
 import com.example.victor.applolli.Jogos;
 import com.example.victor.applolli.Matematica.JogoMat;
 import com.example.victor.applolli.R;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -31,7 +25,6 @@ public class Resultado extends Activity implements TextToSpeech.OnInitListener {
 
     private int MY_DATA_CHECK_CODE = 0;
     private static final int REQUEST_CODE = 1234;
-    private static final int REQUEST_CODE2 = 1;
 
 
     @Override
@@ -39,7 +32,7 @@ public class Resultado extends Activity implements TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resultado);
 
-        mImageView = (ImageView) findViewById(R.id.imageView);
+        mImageView = findViewById(R.id.imageView);
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -58,128 +51,138 @@ public class Resultado extends Activity implements TextToSpeech.OnInitListener {
 
             String Jogo = extras.getString("jogo");
 
-            if(Jogo.equals("letras"))
+            if (Jogo != null)
             {
-                // get
-                String word = ((SalvaPalavra) this.getApplication()).getSomeVariable();
-                System.out.println("Letra gerada: "+word);
-
-                String palavra = extras.getString("word");
-
-                if (word.equals(palavra))
+                if(Jogo.equals("letras"))
                 {
-                    mImageView.setImageResource(R.drawable.robo_ganhou);
-                    mpAplausos.start();
+                    // get
+                    String word = ((SalvaPalavra) this.getApplication()).getSomeVariable();
+                    System.out.println("Letra gerada: "+word);
 
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myTTS.speak("Parabéns, você acertou! Quer jogar novamente?", TextToSpeech.QUEUE_FLUSH, null);
-                            isTTSSpeaking();
-                        }
-                    }, 6000);
+                    String palavra = extras.getString("word");
 
+                    if (word.equals(palavra))
+                    {
+                        mImageView.setImageResource(R.drawable.robo_ganhou);
+                        mpAplausos.start();
 
-                }
-                else
-                {
-                    mImageView.setImageResource(R.drawable.robo_triste);
-                    mpDecepcao.start();
-
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myTTS.speak("Que pena, você errou! Quer tentar novamente?", TextToSpeech.QUEUE_FLUSH, null);
-                            isTTSSpeaking();
-                        }
-                    }, 5000);
-
-                }
-
-            }
-
-            if(Jogo.equals("numeros"))
-            {
-                String palavra = extras.getString("word");
-
-                if (palavra.equals("Acertou"))
-                {
-                    mImageView.setImageResource(R.drawable.robo_ganhou);
-                    mpAplausos.start();
-
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myTTS.speak("Parabéns, você acertou! Quer jogar novamente?", TextToSpeech.QUEUE_FLUSH, null);
-                            isTTSSpeaking();
-
-                        }
-                    }, 6000);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                myTTS.speak("Parabéns, você acertou! Quer jogar novamente?", TextToSpeech.QUEUE_FLUSH, null);
+                                isTTSSpeaking();
+                            }
+                        }, 6000);
 
 
-                }
-                else
-                {
-                    mImageView.setImageResource(R.drawable.robo_triste);
-                    mpDecepcao.start();
+                    }
+                    else
+                    {
+                        mImageView.setImageResource(R.drawable.robo_triste);
+                        mpDecepcao.start();
 
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                myTTS.speak("Que pena, você errou! Quer tentar novamente?", TextToSpeech.QUEUE_FLUSH, null);
+                                isTTSSpeaking();
+                            }
+                        }, 5000);
 
-                            myTTS.speak("Que pena, você errou! Quer tentar novamente?", TextToSpeech.QUEUE_FLUSH, null);
-                            isTTSSpeaking();
-
-
-                        }
-                    }, 5000);
+                    }
 
                 }
 
-            }
-            if(Jogo.equals("bichos"))
-            {
-                String palavra = extras.getString("word");
-
-                if (palavra.equals("Acertou"))
+                if(Jogo.equals("numeros"))
                 {
-                    mImageView.setImageResource(R.drawable.robo_ganhou);
-                    mpAplausos.start();
+                    String palavra = extras.getString("word");
 
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myTTS.speak("Parabéns, você acertou! Quer jogar novamente?", TextToSpeech.QUEUE_FLUSH, null);
-                            isTTSSpeaking();
+                    if (palavra != null)
+                    {
+                        if (palavra.equals("Acertou"))
+                        {
+                            mImageView.setImageResource(R.drawable.robo_ganhou);
+                            mpAplausos.start();
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    myTTS.speak("Parabéns, você acertou! Quer jogar novamente?", TextToSpeech.QUEUE_FLUSH, null);
+                                    isTTSSpeaking();
+
+                                }
+                            }, 6000);
+
+
                         }
-                    }, 5000);
+                        else
+                        {
+                            mImageView.setImageResource(R.drawable.robo_triste);
+                            mpDecepcao.start();
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    myTTS.speak("Que pena, você errou! Quer tentar novamente?", TextToSpeech.QUEUE_FLUSH, null);
+                                    isTTSSpeaking();
+
+
+                                }
+                            }, 5000);
+
+                        }
+                    }
+
 
 
                 }
-                else
+                if(Jogo.equals("bichos"))
                 {
-                    mImageView.setImageResource(R.drawable.robo_triste);
-                    mpDecepcao.start();
+                    String palavra = extras.getString("word");
 
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myTTS.speak("Que pena, você errou! Quer tentar novamente?", TextToSpeech.QUEUE_FLUSH, null);
-                            isTTSSpeaking();
+                    if (palavra != null)
+                    {
+                        if (palavra.equals("Acertou"))
+                        {
+                            mImageView.setImageResource(R.drawable.robo_ganhou);
+                            mpAplausos.start();
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    myTTS.speak("Parabéns, você acertou! Quer jogar novamente?", TextToSpeech.QUEUE_FLUSH, null);
+                                    isTTSSpeaking();
+                                }
+                            }, 5000);
+
+
                         }
-                    }, 5000);
+                        else
+                        {
+                            mImageView.setImageResource(R.drawable.robo_triste);
+                            mpDecepcao.start();
 
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    myTTS.speak("Que pena, você errou! Quer tentar novamente?", TextToSpeech.QUEUE_FLUSH, null);
+                                    isTTSSpeaking();
+                                }
+                            }, 5000);
+
+                        }
+
+                    }
                 }
-
             }
         }
-
     }
 
     private void JogarNovamente()
@@ -187,23 +190,25 @@ public class Resultado extends Activity implements TextToSpeech.OnInitListener {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String AtualJogo = extras.getString("jogo");
-            if(AtualJogo.equals("letras"))
+            if (AtualJogo != null)
             {
-                Intent intent = new Intent(getApplicationContext(),Jogo.class);
-                startActivity(intent);
-            }
-            if(AtualJogo.equals("numeros"))
-            {
-                Intent intent = new Intent(getApplicationContext(),JogoMat.class);
-                startActivity(intent);
-            }
-            if(AtualJogo.equals("bichos"))
-            {
-                Intent intent = new Intent(getApplicationContext(),JogoBichos.class);
-                startActivity(intent);
+                if(AtualJogo.equals("letras"))
+                {
+                    Intent intent = new Intent(getApplicationContext(),Jogo.class);
+                    startActivity(intent);
+                }
+                if(AtualJogo.equals("numeros"))
+                {
+                    Intent intent = new Intent(getApplicationContext(),JogoMat.class);
+                    startActivity(intent);
+                }
+                if(AtualJogo.equals("bichos"))
+                {
+                    Intent intent = new Intent(getApplicationContext(),JogoBichos.class);
+                    startActivity(intent);
+                }
             }
         }
-
     }
     private void VoltarJogos()
     {

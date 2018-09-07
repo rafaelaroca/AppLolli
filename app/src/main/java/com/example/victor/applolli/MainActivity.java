@@ -1,47 +1,24 @@
 package com.example.victor.applolli;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.VideoView;
-
-import com.example.victor.applolli.Letras.Jogo;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
-import java.util.StringTokenizer;
-
-
 import static android.content.ContentValues.TAG;
 
-
-
-
 public class MainActivity extends Activity implements TextToSpeech.OnInitListener,MediaPlayer.OnPreparedListener {
-
-
 
     private static final int REQUEST_CODE = 1234;
     private static final int REQUEST_CODE2 = 1;
@@ -49,9 +26,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private TextToSpeech myTTS;
     public int Opcao;
     String Op_servidor = "servidor_web";
-
-    private ListView ListaDeJogos;
-    String[] mobileArray = {"Encontrar objeto","Jogo das letras","Jogo dos numeros"};
 
 
     @SuppressWarnings("deprecation")
@@ -69,17 +43,14 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         Intent intent = new Intent(getApplicationContext(),ServidorAndroid.class);
         startActivity(intent);
 
+
         /*Intent intent = new Intent(getApplicationContext(), Jogo.class);
         startActivity(intent);*/
 
 
 
-        Button btnComecar= (Button) findViewById(R.id.btnComecar);
-        Button btnLista= (Button) findViewById(R.id.btnLista);
-        Button btnVoltar= (Button) findViewById(R.id.btnVoltar);
-
-        View placeholder = (View) findViewById(R.id.placeholder);
-
+        Button btnComecar = findViewById(R.id.btnComecar);
+        Button btnLista = findViewById(R.id.btnLista);
 
         btnComecar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +113,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
         Opcao =1;
         myTTS.speak("Olá amiguinho, meu nome é Lolli. Qual o seu nome?", TextToSpeech.QUEUE_FLUSH, null);
-        final VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        final VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.setBackgroundColor(Color.WHITE);
@@ -176,7 +147,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
     private void speakWords2(final String NomePessoa) {
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo2;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -202,7 +173,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
     private void speakWords4() {
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo3;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -222,7 +193,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
     private void speakWords5() {
 
-        VideoView VideoRobo = (VideoView)findViewById(R.id.videoViewRelative);
+        VideoView VideoRobo = findViewById(R.id.videoViewRelative);
         String path = "android.resource://" + getPackageName() + "/" + R.raw.robo_nao;
         VideoRobo.setVideoURI(Uri.parse(path));
         VideoRobo.start();
@@ -320,7 +291,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             System.out.println("Resultados :"+matches);
 
-            String text="";
             String NomePessoa =  matches.get(0);
             speakWords2(NomePessoa);
 

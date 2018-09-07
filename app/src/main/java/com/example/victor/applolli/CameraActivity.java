@@ -1,5 +1,6 @@
 package com.example.victor.applolli;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -43,52 +44,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.hardware.Camera;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.SurfaceView;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.Toast;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.vision.v1.Vision;
-import com.google.api.services.vision.v1.VisionRequestInitializer;
-import com.google.api.services.vision.v1.model.AnnotateImageRequest;
-import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
-import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
-import com.google.api.services.vision.v1.model.EntityAnnotation;
-import com.google.api.services.vision.v1.model.Feature;
-import com.google.api.services.vision.v1.model.Image;
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class CameraActivity extends Activity {
@@ -219,10 +177,12 @@ public class CameraActivity extends Activity {
         }
         super.onPause();
     }
+
     private void resetCam() {
         camera.startPreview();
         preview.setCamera(camera);
     }
+
     private void refreshGallery(File file) {
         Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(Uri.fromFile(file));
@@ -249,9 +209,13 @@ public class CameraActivity extends Activity {
             try {
                 File sdCard = Environment.getExternalStorageDirectory();
                 File dir = new File (sdCard.getAbsolutePath() + "/camtest");
-                dir.mkdirs();
+                boolean wasSuccessful = dir.mkdirs();
+                if (wasSuccessful)
+                {
+                    Log.d(TAG,"Direitorio criado");
+                }
 
-                String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                String fileName = String.format(Locale.getDefault(),"%d.jpg", System.currentTimeMillis());
                 File outFile = new File(dir, fileName);
 
                 byte[] pictureBytes;
@@ -302,9 +266,7 @@ public class CameraActivity extends Activity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
             }
-
             resetCam();
             Log.d(TAG, "onPictureTaken - jpeg");
         }
@@ -340,97 +302,98 @@ public class CameraActivity extends Activity {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void callCloudVision(final Bitmap bitmap) throws IOException {
         // Switch text to loading
         //  mImageDetails.setText(R.string.loading_message);
 
 
         // Do the real work in an async task, because we need to use the network anyway
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new AsyncTask<Object, Void, String>() {
 
-                @Override
-                protected String doInBackground(Object... params) {
-                    try {
 
-                        if (mover==0) {
-                            Thread.currentThread().setName("meio");
-                        }
-                        if (mover==1) {
-                            Thread.currentThread().setName("esquerda");
-                        }
-                        if (mover==2) {
-                            Thread.currentThread().setName("direita");
-                        }
+        new AsyncTask<Object, Void, String>() {
 
-                        mover=mover+1;
-                        if (mover==3)
-                        {
-                            mover=0;
-                        }
-                        HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
-                        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+            @Override
+            protected String doInBackground(Object... params) {
+                try {
 
-                        Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
+                    if (mover==0) {
+                        Thread.currentThread().setName("meio");
+                    }
+                    if (mover==1) {
+                        Thread.currentThread().setName("esquerda");
+                    }
+                    if (mover==2) {
+                        Thread.currentThread().setName("direita");
+                    }
 
-                        builder.setVisionRequestInitializer(new
-                                VisionRequestInitializer(CLOUD_VISION_API_KEY));
-                        Vision vision = builder.build();
+                    mover=mover+1;
+                    if (mover==3)
+                    {
+                        mover=0;
+                    }
+                    HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
+                    JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
-                        BatchAnnotateImagesRequest batchAnnotateImagesRequest =
-                                new BatchAnnotateImagesRequest();
-                        batchAnnotateImagesRequest.setRequests(new ArrayList<AnnotateImageRequest>() {{
-                            AnnotateImageRequest annotateImageRequest = new AnnotateImageRequest();
+                    Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
 
-                            // Add the image
-                            Image base64EncodedImage = new Image();
-                            // Convert the bitmap to a JPEG
-                            // Just in case it's a format that Android understands but Cloud Vision
-                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
-                            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+                    builder.setVisionRequestInitializer(new
+                            VisionRequestInitializer(CLOUD_VISION_API_KEY));
+                    Vision vision = builder.build();
 
-                            // Base64 encode the JPEG
-                            base64EncodedImage.encodeContent(imageBytes);
-                            annotateImageRequest.setImage(base64EncodedImage);
+                    BatchAnnotateImagesRequest batchAnnotateImagesRequest =
+                            new BatchAnnotateImagesRequest();
+                    batchAnnotateImagesRequest.setRequests(new ArrayList<AnnotateImageRequest>() {{
+                        AnnotateImageRequest annotateImageRequest = new AnnotateImageRequest();
 
-                            // add the features we want
-                            annotateImageRequest.setFeatures(new ArrayList<Feature>() {{
-                                Feature labelDetection = new Feature();
-                                labelDetection.setType("LABEL_DETECTION");
-                                labelDetection.setMaxResults(20);
-                                add(labelDetection);
-                            }});
+                        // Add the image
+                        Image base64EncodedImage = new Image();
+                        // Convert the bitmap to a JPEG
+                        // Just in case it's a format that Android understands but Cloud Vision
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+                        byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
-                            // Add the list of one thing to the request
-                            add(annotateImageRequest);
+                        // Base64 encode the JPEG
+                        base64EncodedImage.encodeContent(imageBytes);
+                        annotateImageRequest.setImage(base64EncodedImage);
+
+                        // add the features we want
+                        annotateImageRequest.setFeatures(new ArrayList<Feature>() {{
+                            Feature labelDetection = new Feature();
+                            labelDetection.setType("LABEL_DETECTION");
+                            labelDetection.setMaxResults(20);
+                            add(labelDetection);
                         }});
 
-                        Vision.Images.Annotate annotateRequest =
-                                vision.images().annotate(batchAnnotateImagesRequest);
-                        // Due to a bug: requests to Vision API containing large images fail when GZipped.
-                        annotateRequest.setDisableGZipContent(true);
-                        Log.d(TAG, "created Cloud Vision request object, sending request");
+                        // Add the list of one thing to the request
+                        add(annotateImageRequest);
+                    }});
 
-                        BatchAnnotateImagesResponse response = annotateRequest.execute();
+                    Vision.Images.Annotate annotateRequest =
+                            vision.images().annotate(batchAnnotateImagesRequest);
+                    // Due to a bug: requests to Vision API containing large images fail when GZipped.
+                    annotateRequest.setDisableGZipContent(true);
+                    Log.d(TAG, "created Cloud Vision request object, sending request");
+
+                    BatchAnnotateImagesResponse response = annotateRequest.execute();
 
 
-                        return convertResponseToString(response);
+                    return convertResponseToString(response);
 
-                    } catch (GoogleJsonResponseException e) {
-                        Log.d(TAG, "failed to make API request because " + e.getContent());
-                    } catch (IOException e) {
-                        Log.d(TAG, "failed to make API request because of other IOException " +
-                                e.getMessage());
-                    }
-                    return "Cloud Vision API request failed. Check logs for details.";
+                } catch (GoogleJsonResponseException e) {
+                    Log.d(TAG, "failed to make API request because " + e.getContent());
+                } catch (IOException e) {
+                    Log.d(TAG, "failed to make API request because of other IOException " +
+                            e.getMessage());
                 }
+                return "Cloud Vision API request failed. Check logs for details.";
+            }
 
-                protected void onPostExecute(String result) {
-                    //  mImageDetails.setText(result);
-                }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
+            protected void onPostExecute(String result) {
+                //  mImageDetails.setText(result);
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {

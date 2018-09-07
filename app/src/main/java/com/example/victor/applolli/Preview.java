@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
-    private final String TAG = "Preview";
+
 
     SurfaceView mSurfaceView;
     SurfaceHolder mHolder;
@@ -94,6 +94,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
+        final String TAG = "Preview";
         // The Surface has been created, acquire the camera and tell it where
         // to draw.
         try {
@@ -121,16 +122,13 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
         Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
-
-        int targetHeight = h;
-
         // Try to find an size match aspect ratio and size
         for (Size size : sizes) {
             double ratio = (double) size.width / size.height;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (Math.abs(size.height - targetHeight) < minDiff) {
+            if (Math.abs(size.height - h) < minDiff) {
                 optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
+                minDiff = Math.abs(size.height - h);
             }
         }
 
@@ -138,9 +136,9 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
             for (Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff) {
+                if (Math.abs(size.height - h) < minDiff) {
                     optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
+                    minDiff = Math.abs(size.height - h);
                 }
             }
         }
